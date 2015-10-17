@@ -5,8 +5,9 @@
 /* TODO Define system operating frequency */
 
 /* Microcontroller MIPs (FCY) */
-#define SYS_FREQ        500000L
+#define SYS_FREQ        400000L
 #define FCY             SYS_FREQ/4
+#define _XTAL_FREQ      SYS_FREQ
 
 /******************************************************************************/
 /* System Function Prototypes                                                 */

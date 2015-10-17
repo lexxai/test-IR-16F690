@@ -23,6 +23,17 @@
 /******************************************************************************/
 /* Main Program                                                               */
 /******************************************************************************/
+#define IR_LIMIT1 1010
+#define IR_LIMIT2 20
+#define IR_TRY   100
+
+void sendByteEUSART(unsigned char byte){
+    
+    TXREG=byte;
+    while(!TXSTAbits.TRMT); //WAIT Trasmition finish
+    
+}
+
 void main(void)
 {
     /* Configure the oscillator for the device */
@@ -31,10 +42,32 @@ void main(void)
     /* Initialize I/O and Peripherals for application */
     InitApp();
 
+    uint16_t result;
+    uint8_t IrTry;
+    //IR LED - ON
+    IR_OUTPUT = IR_OUTPUT_ON;
+    IR_OUTPUT_FLUSH;
 
+    IrTry=IR_TRY;
+            
     while(1)
     {
-        /* TODO <INSERT USER APPLICATION CODE HERE> */
+        //Read analog value 
+        __delay_ms(5);
+        ADCON0bits.GO_nDONE=1;
+        while(ADCON0bits.GO_nDONE);
+        result=ADRESH<<8|ADRESL;
+        if (result<=IR_LIMIT1 && result>=IR_LIMIT2) {
+           if (IrTry>0) IrTry--;
+        }else{
+           IrTry=IR_TRY;
+        }
+        LED_SIGNAL = (IrTry==0) ? LED_SIGNAL_ON : LED_SIGNAL_OFF;
+        LED_SIGNAL_FLUSH;
+        //Send DWORD to UART
+        //sendByteEUSART(IrTry==0);
+        //sendByteEUSART(ADRESH);
+        //sendByteEUSART(ADRESL);
     }
 
 }
