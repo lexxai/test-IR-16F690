@@ -4,6 +4,8 @@
 
 - Використовується аналоговий вхід для підключення інфрачервного приймача.
 - Для виводу результату використовується ввімкнення сигнального світлодіоду.
+- Для виводу результату ADC можливо використати RS232 (TX) Speed 57600 bod, 8N1, uint16.
+- Internal oscillator Fosc=4Mhz
 
 
 ![Shema](https://github.com/lexxai/test-IR-16F690/raw/master/shema/shema.png "Shema")
