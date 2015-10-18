@@ -7,12 +7,17 @@
 - Для виводу результату ADC можливо використати RS232 (TX) Speed 57600 bod, 8N1, uint16.
 - Використанно чіп Microchip PIC16F690. Internal oscillator Fosc=4Mhz.
 - Мова програмування - C. Компілятор - Microchip XC8. Середа розробки - MPLAB X IDE.
- 
+
+
+![Shema](https://github.com/lexxai/test-IR-16F690/raw/master/shema/shema.png "Shema")
+
 Значення ADC від 0-1023 (10 біт), але якщо у приміщщені гоярть лампи рожарювання 220В, то вони заповнюють 
 іфрачервний фон і данною схемою не визначити наявність об'єкту, так як значененя ADC при цьому є 25-35.
+
+Діаграма фону: ![IRFILL] (https://github.com/lexxai/test-IR-16F690/raw/master/shema/ir-fill.PNG)
+
 
 У приміщенні з осівітленням зі звичайними "економками", визачив наявність об'єкут на відстанні до 0,9м-1.0м. При цьому поріг визнаяененя об'єкту становив ADC=1010.
 
 
 
-![Shema](https://github.com/lexxai/test-IR-16F690/raw/master/shema/shema.png "Shema")
