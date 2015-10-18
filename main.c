@@ -34,6 +34,15 @@ void sendByteEUSART(unsigned char byte){
     
 }
 
+void send2BytesEUSART(unsigned char byte1,unsigned char byte2){
+    
+    TXREG=byte1;
+    NOP();
+    TXREG=byte2;
+    while(!TXSTAbits.TRMT); //WAIT Trasmition finish
+    
+}
+
 void main(void)
 {
     /* Configure the oscillator for the device */
@@ -66,6 +75,7 @@ void main(void)
         LED_SIGNAL_FLUSH;
         //Send DWORD to UART
         //sendByteEUSART(IrTry==0);
+        send2BytesEUSART(ADRESH,ADRESL);
         //sendByteEUSART(ADRESH);
         //sendByteEUSART(ADRESL);
     }
