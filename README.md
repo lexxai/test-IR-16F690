@@ -17,6 +17,7 @@
 
 Спробував TSOP 4838, але зрозумів що це те те що потрбіно, з'ясував що є:
 TSOP 4038 presencre sensor http://www.vishay.com/docs/82458/tssp40.pdf
+
 http://www.vishay.com/ir-receiver-modules/presence-sensor/
 
 
