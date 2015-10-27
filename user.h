@@ -25,10 +25,14 @@ volatile union {
 #define TRIS_INPUT 1
 #define ANS_ANALOG 1
 #define ANS_DIGITAL 0
-#define IR_IN PORTCbits.RC7;
-#define IR_IN_ANS ANSELHbits.ANS9
-#define IR_IN_TRIS TRISCbits.TRISC7
-#define IR_IN_ANALOG_CHANNEL 9
+#define IR_IN1 PORTCbits.RC7;
+#define IR_IN1_ANS ANSELHbits.ANS9
+#define IR_IN1_TRIS TRISCbits.TRISC7
+#define IR_IN1_ANALOG_CHANNEL 9
+#define IR_IN2 PORTCbits.RC6;
+#define IR_IN2_ANS ANSELHbits.ANS8
+#define IR_IN2_TRIS TRISCbits.TRISC6
+#define IR_IN2_ANALOG_CHANNEL 8
 
 #define IR_OUTPUT_TRIS TRISCbits.TRISC5
 #define IR_OUTPUT LATPORTC.bits.RC5
@@ -40,6 +44,9 @@ volatile union {
 #define LED_SIGNAL_ON  1
 #define LED_SIGNAL_OFF !LED_SIGNAL_ON
 #define LED_SIGNAL_FLUSH LATPORTB_FLUSH
+
+#define use_IR_IN1 0
+#define use_IR_IN2 1
 
 
 

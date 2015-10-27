@@ -61,6 +61,7 @@ void main(void)
             
     while(1)
     {
+#if (use_IR_IN1)
         //Read analog value 
         __delay_ms(5);
         ADCON0bits.GO_nDONE=1;
@@ -78,6 +79,14 @@ void main(void)
         send2BytesEUSART(ADRESH,ADRESL);
         //sendByteEUSART(ADRESH);
         //sendByteEUSART(ADRESL);
+#endif
+#if (use_IR_IN2)
+     __delay_ms(5);
+     LED_SIGNAL=!IR_IN2;
+     LED_SIGNAL_FLUSH;
+        
+#endif        
+        
     }
 
 }
