@@ -15,4 +15,4 @@
 
 
 
-![Shema](https://github.com/lexxai/test-IR-16F690/raw/master/shema/shema.png "Shema")
+![Shema](https://github.com/lexxai/test-IR-16F690/blob/TSOP/shema/shema.png "Shema")
