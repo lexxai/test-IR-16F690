@@ -15,6 +15,10 @@
 
 Наступний етап, використання TSOP ...
 
+Спробував TSOP 4838, але зрозумів що це те те що потрбіно, з'ясував що є:
+TSOP 4038 presencre sensor http://www.vishay.com/docs/82458/tssp40.pdf
+http://www.vishay.com/ir-receiver-modules/presence-sensor/
+
 
 
 ![Shema](https://github.com/lexxai/test-IR-16F690/blob/TSOP/shema/shema.png "Shema")
