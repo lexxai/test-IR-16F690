@@ -27,46 +27,54 @@
 #define IR_LIMIT2 20
 #define IR_TRY   100
 
-void sendByteEUSART(unsigned char byte) {
+
+
+
+
+#define durationLogic1  1675  //sum 2232  //us
+#define durationLogic0  562   //sum 1125  //us
+#define durationBeacon 9000  //us
+#define durationSpace  4500  //us
+#define durationSpaceRepeat  2250  //us
+#define durationRepeat 11174  //us
+
+// USERS SUB
+
+
+void sendByteEUSART(unsigned char byte, bool sync) {
 
     TXREG = byte;
-    while (!TXSTAbits.TRMT); //WAIT Trasmition finish
+    if (sync) while (!TXSTAbits.TRMT); //WAIT Trasmition finish
 
 }
 
-void send2BytesEUSART(unsigned char byte1, unsigned char byte2) {
+void send2BytesEUSART(unsigned char byte1, unsigned char byte2, bool sync) {
 
     TXREG = byte1;
     NOP();
     TXREG = byte2;
-    while (!TXSTAbits.TRMT); //WAIT Trasmition finish
+    if (sync) while (!TXSTAbits.TRMT); //WAIT Trasmition finish
 
 }
 
-#define enablePWMoutput  IR_OUTPUT_TRIS = TRIS_OUTPUT // Enable PWM pin (CCP1) 
-#define disablePWMoutput IR_OUTPUT_TRIS = TRIS_INPUT  // Disable PWM pin (CCP1) 
-
-#define durationLogic1 2232  //us
-#define durationLogic0 1120  //us
-#define durationBeacon 13409  //us
-#define durationRepeat 11174  //us
-
 void sendIRbit(bool b) {
     enablePWMoutput;
+    __delay_us(durationLogic0);
+    disablePWMoutput;
     if (b) {
         __delay_us(durationLogic1);
     } else {
         __delay_us(durationLogic0);
     }
-    disablePWMoutput;
-    __delay_us(durationLogic0);
 }
+
+
 
 void sendIRByte(unsigned char c) {
     for (int j = 0; j < 8; j++) {
-        sendIRbit(c & 1);
-        c >> 1;
-        LED_SIGNAL=!IR_IN2;
+        sendIRbit(c & 0x80);
+        c <<= 1;
+        LED_SIGNAL = !IR_IN2;
         LED_SIGNAL_FLUSH;
     }
 }
@@ -75,13 +83,41 @@ void sendIRServiceBit(bool type) {
     //type 0-prefix, 1-suffix
     enablePWMoutput;
     if (type) {
-        __delay_us(durationRepeat);
+        __delay_us(durationLogic0);
+        disablePWMoutput;
+        __delay_ms(40); // wait for the Data Frame time. 
     } else {
-        __delay_us(durationBeacon);
+        __delay_us(durationBeacon); // leading PULSE
+        disablePWMoutput;
+        __delay_us(durationSpace); // space
     }
-    disablePWMoutput;
-    __delay_us(durationLogic0);
 }
+
+void sendFrame(unsigned char address, unsigned char command) {
+        sendIRServiceBit(0);
+        sendIRByte(address);
+        sendIRByte(~address);
+        sendIRByte(command);
+        sendIRByte(~command);
+        sendIRServiceBit(1);
+}
+
+void sendRepeate()
+{
+    enablePWMoutput;
+	__delay_us(durationBeacon);				//wait for ~9ms 	
+	disablePWMoutput;
+	__delay_us(durationSpaceRepeat);	    //wait for 2.25ms
+
+    enablePWMoutput;
+	__delay_us(durationLogic0);				//wait for ~562.5us
+    disablePWMoutput;
+	__delay_us(96187);				//delay for 96.187 ms before sending the next repeate code
+	
+}
+
+
+//----------------------------------------------------
 
 void main(void) {
     /* Configure the oscillator for the device */
@@ -93,16 +129,14 @@ void main(void) {
     uint16_t result;
     uint8_t IrTry;
     //IR LED - ON
-    IR_OUTPUT = IR_OUTPUT_ON;
+    IR_OUTPUT = IR_OUTPUT_OFF;
     IR_OUTPUT_FLUSH;
 
     IrTry = IR_TRY;
 
-    unsigned char *command;
-    command[0] = 0x34;
-    command[1] = 0x43;
-    command[2] = 0x54;
-    command[3] = 0x94;
+//    unsigned char *command;
+//    command[0] = 0x8D; // addres
+//    command[1] = 0xB1; // command
 
 
     while (1) {
@@ -127,14 +161,8 @@ void main(void) {
 #endif
 #if (use_IR_IN2_PWM)
 
-        sendIRServiceBit(0);
-        for (int i = 0; i < 4; i++) {
-            sendIRByte(command[i]);
-        }
-        sendIRServiceBit(1);
-        
-        __delay_ms(1000);
-
+        sendFrame(0x8D,0xB1);
+        __delay_ms(5000);
 
 #endif        
 
