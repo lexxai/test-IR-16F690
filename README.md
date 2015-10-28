@@ -13,6 +13,13 @@
 
 У приміщенні з осівітленням зі звичайними "економками", визачив наявність об'єкут на відстанні до 0,9м-1.0м. При цьому поріг визнаяененя об'єкту становив ADC=1010.
 
+Наступний етап, використання TSSP ...
+
+Спробував TSSP 4838, але зрозумів що це те те що потрбіно, з'ясував що є:
+TSSP 4038 presencre sensor http://www.vishay.com/docs/82458/tssp40.pdf
+
+http://www.vishay.com/ir-receiver-modules/presence-sensor/
 
 
-![Shema](https://github.com/lexxai/test-IR-16F690/raw/master/shema/shema.png "Shema")
+
+![Shema](https://github.com/lexxai/test-IR-16F690/blob/TSOP/shema/shema.png "Shema")
