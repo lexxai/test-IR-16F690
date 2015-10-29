@@ -50,12 +50,12 @@
 
 void sendIRbit(bool b) {
     enablePWMoutput;
-    __delay_us(durationLogic0);
+    _t_delay_us(durationLogic0);
     disablePWMoutput;
     if (b) {
-        __delay_us(durationLogic1);
+        _t_delay_us(durationLogic1);
     } else {
-        __delay_us(durationLogic0);
+        _t_delay_us(durationLogic0);
     }
 }
 
@@ -70,13 +70,13 @@ void sendIRServiceBit(bool type) {
     //type 0-prefix, 1-suffix
     enablePWMoutput;
     if (type) {
-        __delay_us(durationLogic0);
+        _t_delay_us(durationLogic0);
         disablePWMoutput;
-        __delay_ms(40); // wait for the Data Frame time. 
+        _t_delay_ms(40); // wait for the Data Frame time. 
     } else {
-        __delay_us(durationBeacon); // leading PULSE
+        _t_delay_us(durationBeacon); // leading PULSE
         disablePWMoutput;
-        __delay_us(durationSpace); // space
+        _t_delay_us(durationSpace); // space
     }
 }
 
@@ -91,14 +91,14 @@ void sendFrame(unsigned char address, unsigned char command) {
 
 void sendRepeate() {
     enablePWMoutput;
-    __delay_us(durationBeacon); //wait for ~9ms 	
+    _t_delay_us(durationBeacon); //wait for ~9ms 	
     disablePWMoutput;
-    __delay_us(durationSpaceRepeat); //wait for 2.25ms
+    _t_delay_us(durationSpaceRepeat); //wait for 2.25ms
 
     enablePWMoutput;
-    __delay_us(durationLogic0); //wait for ~562.5us
+    _t_delay_us(durationLogic0); //wait for ~562.5us
     disablePWMoutput;
-    __delay_us(96187); //delay for 96.187 ms before sending the next repeate code
+    _t_delay_us(96187); //delay for 96.187 ms before sending the next repeate code
 
 }
 
@@ -131,7 +131,7 @@ void main(void) {
     while (1) {
 #if (use_IR_IN2_PWM_COMPARE)
         //Read analog value 
-        __delay_ms(5);
+        _t_delay_ms(5);
         ADCON0bits.GO_nDONE = 1;
         while (ADCON0bits.GO_nDONE);
         result = ADRESH << 8 | ADRESL;
@@ -150,9 +150,8 @@ void main(void) {
 #endif
 #if (use_IR_IN2_PWM)
         //send2BytesEUSART(0x8D,0xB1,true);
-        //sendFrame(0x8D, 0xB1);
-        //delay timer0 256us
-        //TMR1=-1000;while(TMR1);
+        
+        //_t_delay_ms(1000);
         
         if (dataready) // data is received and ready to be procssed 
         {
@@ -177,7 +176,9 @@ void main(void) {
             dataready=0; 
             send2BytesEUSART(address,command,false);
         }
-        //__delay_ms(5000);
+        //sendFrame(0x8D, 0xB1);
+        //_t_delay_ms(5000);
+        //_t_delay_ms(800);
 
 #endif        
 

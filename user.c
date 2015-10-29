@@ -142,6 +142,9 @@ void InitApp(void)
     IOCBbits.IOCB4 = 1;  //interrupt on change only for PORTB.4 (IR_IN2)
     INTCONbits.T0IE=1;
     INTCONbits.T0IF=0;
+    PIE1bits.TMR1IE=1;
+    PIR1bits.TMR1IF=0;
+    
     INTCONbits.RABIE=1;  //interrupt on change enable
     INTCONbits.RABIF=0;  //interrupt on change flag clear
     INTCONbits.PEIE=1;   //interrupr enable from pheri

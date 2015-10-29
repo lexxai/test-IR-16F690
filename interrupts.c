@@ -151,6 +151,9 @@ void interrupt isr(void) {
     } else if (INTCONbits.T0IF){
         if(timer<0xFFFF)  timer++;	// this code is to increment the variable timer's value on every over flow but this if conditon will prevent this variable form rollover when a long timeout occurs
         INTCONbits.T0IF=0;
+    } else if (PIR1bits.TMR1IF) {   
+        timer1ready=false;
+        PIR1bits.TMR1IF=0;
     } else if (INTCONbits.RABIF) // check the interrupt on change flag
     {
         LED_SIGNAL = LED_SIGNAL_ON; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 

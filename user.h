@@ -54,6 +54,9 @@ volatile union {
 #define enablePWMoutput  TMR2 = 0x00;CCP1CONbits.CCP1M=0b1100  //PWM mode active-high
 #define disablePWMoutput CCP1CONbits.CCP1M = 0x0 //stop generating 38Khz singal. 
 
+#define _t_delay_us(tu) timer1ready=true;TMR1=-tu;while(timer1ready)
+#define _t_delay_ms(t) for (int _loop_=0;_loop_<t;_loop_++) _t_delay_us(1000);
+
 
 #define TICKS11ms 	11044      	// ticks in 11ms
 #define TICKS5o5ms 	5522 		// ticks in 5.5ms
@@ -77,7 +80,7 @@ volatile unsigned char necpoj = 0; /* (necpoj=NEC position )this varible is used
 volatile unsigned char address = 0, notaddress = 0; // these varible are used to store received address
 volatile unsigned char command = 0, notcommand = 0; // these varible are used to store received address
 
-
+volatile bool timer1ready=true;
 
 /******************************************************************************/
 /* User Level #define Macros                                                  */
