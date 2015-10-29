@@ -65,17 +65,17 @@ volatile union {
 unsigned int TIMEOUT = TICKS11ms; // the pulse should occur before this time excede Otherwise it is an error 
 unsigned int PREPULSE = TICKS8ms; // the interrupt should occur after this time Otherwise it is an error
 
-//static unsigned short long timer; // varible to keep track of long timeouts  ( it can also be int if you want to save flash memory for some other purpose  ) 
-volatile  unsigned char dataready; // varible to use as flag when data is completly received and  ready it is 1 else 0 
+volatile unsigned short long timer; // varible to keep track of long timeouts  ( it can also be int if you want to save flash memory for some other purpose  ) 
+volatile unsigned char dataready; // varible to use as flag when data is completly received and  ready it is 1 else 0 
 
-volatile  unsigned char necpoj = 0; /* (necpoj=NEC position )this varible is used to keep track of the edges of the input singal 
+volatile unsigned char necpoj = 0; /* (necpoj=NEC position )this varible is used to keep track of the edges of the input singal 
 											as decoding of the singal is done by a state machine 
 											so this varible acutalley sotores what state we currently are 
 							 				and total bits 32 and 2 leading pulse */
 
 
-volatile  unsigned char address = 0, notaddress = 0; // these varible are used to store received address
-volatile  unsigned char command = 0, notcommand = 0; // these varible are used to store received address
+volatile unsigned char address = 0, notaddress = 0; // these varible are used to store received address
+volatile unsigned char command = 0, notcommand = 0; // these varible are used to store received address
 
 
 

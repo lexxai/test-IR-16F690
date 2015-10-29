@@ -130,17 +130,21 @@ void InitApp(void)
     T1CONbits.TMR1ON=1;          //enable timer1;
     
     //TIMER0
+    TMR0=0;
     OPTION_REGbits.T0CS=0;       //Fosc/4 1000000, 1us
-    OPTION_REGbits.PSA=0;       //Prescaler use Timer0          
-    OPTION_REGbits.PS=0b111;    //1:256           256us  
+    OPTION_REGbits.PSA=1;       //Prescaler not use Timer0          
+    //OPTION_REGbits.PS=0b000;    //1:1           1us  
 #endif
     
  
     /* Enable interrupts */
     IOCA=0;  IOCB=0;     //interrupt on change global disable
     IOCBbits.IOCB4 = 1;  //interrupt on change only for PORTB.4 (IR_IN2)
+    INTCONbits.T0IE=1;
+    INTCONbits.T0IF=0;
     INTCONbits.RABIE=1;  //interrupt on change enable
     INTCONbits.RABIF=0;  //interrupt on change flag clear
+    INTCONbits.PEIE=1;   //interrupr enable from pheri
     INTCONbits.GIE=1 ;   // GLOBAL interrupt enable
     
 }

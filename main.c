@@ -150,12 +150,10 @@ void main(void) {
 #endif
 #if (use_IR_IN2_PWM)
         //send2BytesEUSART(0x8D,0xB1,true);
-        sendFrame(0x8D, 0xB1);
+        //sendFrame(0x8D, 0xB1);
         //delay timer0 256us
-        for (int i=0;i<15;i++){
-            TMR0=1;
-            while(TMR0);
-        }
+        //TMR1=-1000;while(TMR1);
+        
         if (dataready) // data is received and ready to be procssed 
         {
 //            switch (command) // swich on 

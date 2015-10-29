@@ -24,6 +24,7 @@
 // *  Author:  Gaurav
 // *  website: www.circuitvalley.com 
 // *  Email: mailchaduarygaurav@gmail.com
+// *  https://github.com/circuitvalley/IR-Remote-Control
 
 void interruptOnChangeIsr(void) {
 
@@ -31,12 +32,12 @@ void interruptOnChangeIsr(void) {
     unsigned char pin;
     static unsigned long rxbuffer;
 
-    tdiff = TMR1; // calculate how much time has been passed since last interrupt 
+    tdiff = ((timer<<8)+TMR0); // calculate how much time has been passed since last interrupt 
     //send2BytesEUSART(TMR1H,TMR1L,false);
     // the time shold be less then time out and greater than PREPULSE 
     pin = IR_IN2; // store the current status of Sensor 
-    TMR1 = 0; // reset the timer0 to measure the next edge(interrupt) of input
-//    timer = 0; // reset the timer varible to
+    TMR0 = 0; // reset the timer0 to measure the next edge(interrupt) of input
+    timer = 0; // reset the timer varible to
 
     /* state machine is started here and it totally managed and keeps track of its states using the varible necpoj 
     here are the details of necpoj ( NEC position ) varible 
@@ -147,6 +148,9 @@ void interrupt isr(void) {
         IR_OUTPUT_FLUSH;
         //TMR1=0x0000;
         PIR1bits.CCP1IF = 0;
+    } else if (INTCONbits.T0IF){
+        if(timer<0xFFFF)  timer++;	// this code is to increment the variable timer's value on every over flow but this if conditon will prevent this variable form rollover when a long timeout occurs
+        INTCONbits.T0IF=0;
     } else if (INTCONbits.RABIF) // check the interrupt on change flag
     {
         LED_SIGNAL = LED_SIGNAL_ON; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 
