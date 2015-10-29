@@ -38,24 +38,15 @@
 #define durationSpaceRepeat  2250  //us
 #define durationRepeat 11174  //us
 
+
+
+
+
+
+
+
 // USERS SUB
 
-
-void sendByteEUSART(unsigned char byte, bool sync) {
-
-    TXREG = byte;
-    if (sync) while (!TXSTAbits.TRMT); //WAIT Trasmition finish
-
-}
-
-void send2BytesEUSART(unsigned char byte1, unsigned char byte2, bool sync) {
-
-    TXREG = byte1;
-    NOP();
-    TXREG = byte2;
-    if (sync) while (!TXSTAbits.TRMT); //WAIT Trasmition finish
-
-}
 
 void sendIRbit(bool b) {
     enablePWMoutput;
@@ -68,14 +59,10 @@ void sendIRbit(bool b) {
     }
 }
 
-
-
 void sendIRByte(unsigned char c) {
     for (int j = 0; j < 8; j++) {
         sendIRbit(c & 0x80);
         c <<= 1;
-        LED_SIGNAL = !IR_IN2;
-        LED_SIGNAL_FLUSH;
     }
 }
 
@@ -94,27 +81,29 @@ void sendIRServiceBit(bool type) {
 }
 
 void sendFrame(unsigned char address, unsigned char command) {
-        sendIRServiceBit(0);
-        sendIRByte(address);
-        sendIRByte(~address);
-        sendIRByte(command);
-        sendIRByte(~command);
-        sendIRServiceBit(1);
+    sendIRServiceBit(0);
+    sendIRByte(address);
+    sendIRByte(~address);
+    sendIRByte(command);
+    sendIRByte(~command);
+    sendIRServiceBit(1);
 }
 
-void sendRepeate()
-{
+void sendRepeate() {
     enablePWMoutput;
-	__delay_us(durationBeacon);				//wait for ~9ms 	
-	disablePWMoutput;
-	__delay_us(durationSpaceRepeat);	    //wait for 2.25ms
-
-    enablePWMoutput;
-	__delay_us(durationLogic0);				//wait for ~562.5us
+    __delay_us(durationBeacon); //wait for ~9ms 	
     disablePWMoutput;
-	__delay_us(96187);				//delay for 96.187 ms before sending the next repeate code
-	
+    __delay_us(durationSpaceRepeat); //wait for 2.25ms
+
+    enablePWMoutput;
+    __delay_us(durationLogic0); //wait for ~562.5us
+    disablePWMoutput;
+    __delay_us(96187); //delay for 96.187 ms before sending the next repeate code
+
 }
+
+
+
 
 
 //----------------------------------------------------
@@ -134,9 +123,9 @@ void main(void) {
 
     IrTry = IR_TRY;
 
-//    unsigned char *command;
-//    command[0] = 0x8D; // addres
-//    command[1] = 0xB1; // command
+    //    unsigned char *command;
+    //    command[0] = 0x8D; // addres
+    //    command[1] = 0xB1; // command
 
 
     while (1) {
@@ -160,9 +149,37 @@ void main(void) {
         //sendByteEUSART(ADRESL);
 #endif
 #if (use_IR_IN2_PWM)
-
-        sendFrame(0x8D,0xB1);
-        __delay_ms(5000);
+        //send2BytesEUSART(0x8D,0xB1,true);
+        sendFrame(0x8D, 0xB1);
+        //delay timer0 256us
+        for (int i=0;i<15;i++){
+            TMR0=1;
+            while(TMR0);
+        }
+        if (dataready) // data is received and ready to be procssed 
+        {
+//            switch (command) // swich on 
+//            {
+//                case 0x50: RELAY1 = !RELAY1; //Toggle relay 1	
+//                    break;
+//                case 0xD8: RELAY2 = !RELAY2; //Toggle relay 2
+//                    break;
+//                case 0xF8: RELAY3 = !RELAY3; //Toggle relay 3
+//                    break;
+//                    //	case 0x30: RELAY4 = !RELAY4;		//Toggle relay 4		// can not use realy 4 as it is used for UART out
+//                    //			   break;
+//                case 0xB0: RELAY1 = 0; //Turn off all the relay
+//                    RELAY2 = 0;
+//                    RELAY3 = 0;
+//                    //			   RELAY4 = 0;
+//                    break;
+//                default:
+//                    break;
+//            }
+            dataready=0; 
+            send2BytesEUSART(address,command,false);
+        }
+        //__delay_ms(5000);
 
 #endif        
 

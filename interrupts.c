@@ -32,7 +32,7 @@ void interruptOnChangeIsr(void) {
     static unsigned long rxbuffer;
 
     tdiff = TMR1; // calculate how much time has been passed since last interrupt 
-    send2BytesEUSART(TMR1H,TMR1L,false);
+    //send2BytesEUSART(TMR1H,TMR1L,false);
     // the time shold be less then time out and greater than PREPULSE 
     pin = IR_IN2; // store the current status of Sensor 
     TMR1 = 0; // reset the timer0 to measure the next edge(interrupt) of input

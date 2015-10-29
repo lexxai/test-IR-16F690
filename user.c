@@ -83,7 +83,7 @@ void InitApp(void)
     //CCPR1L = 26;        //26us(+1.2%))
     
  
-#if (use_IR_IN2)
+#if (use_IR_IN2_PWM_COMPARE)
     //use PWM module - Compare Mode
     //use Timer1
     T1CONbits.nT1SYNC=1;   //non Async mode
@@ -107,9 +107,61 @@ void InitApp(void)
 
     T1CONbits.TMR1ON=1;    //Enable Timer1
     
+#elif (use_IR_IN2_PWM)    
+    //PWR 50%
+    IR_OUTPUT_TRIS = TRIS_INPUT; // Disable PWM pin (CCP1)
+    PR2=26;                      // 37037.03704 Hz (Fosc=4Mhz)
+
+    enablePWMoutput;           // CCP1CONbits.CCP1M=0b1100;  //PWM mode active-high
+    CCPR1L=54;                 //HSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    CCP1CONbits.DC1B=0b00;     //LSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    //TIMER2
+    //PIR1bits.T2IF=0;           //ready for next interrupt
+    T2CONbits.TOUTPS = 0b0000; //TMR2 Output Prescaler 1:1
+    T2CONbits.T2CKPS = 0b00;   //TMR2 Clock Prescale 1
+    T2CONbits.TMR2ON = 1;      //Enable TMR2
+    IR_OUTPUT_TRIS = TRIS_OUTPUT; // Enable PWM pin (CCP1) // must be by interrupt
+    
+    //TIMER1
+    TMR1=0;
+    T1CONbits.TMR1CS=0;          //Source Fosc/4
+    T1CONbits.T1CKPS=0b00;       //Prescaler
+    T1CONbits.nT1SYNC=1;         //non Sync
+    T1CONbits.TMR1ON=1;          //enable timer1;
+    
+    //TIMER0
+    OPTION_REGbits.T0CS=0;       //Fosc/4 1000000, 1us
+    OPTION_REGbits.PSA=0;       //Prescaler use Timer0          
+    OPTION_REGbits.PS=0b111;    //1:256           256us  
 #endif
     
  
     /* Enable interrupts */
+    IOCA=0;  IOCB=0;     //interrupt on change global disable
+    IOCBbits.IOCB4 = 1;  //interrupt on change only for PORTB.4 (IR_IN2)
+    INTCONbits.RABIE=1;  //interrupt on change enable
+    INTCONbits.RABIF=0;  //interrupt on change flag clear
+    INTCONbits.GIE=1 ;   // GLOBAL interrupt enable
+    
 }
 
+
+
+
+
+
+void sendByteEUSART(unsigned char byte, bool sync) {
+
+    TXREG = byte;
+    if (sync) while (!TXSTAbits.TRMT); //WAIT Trasmition finish
+
+}
+
+void send2BytesEUSART(unsigned char byte1, unsigned char byte2, bool sync) {
+
+    TXREG = byte1;
+    NOP();
+    TXREG = byte2;
+    if (sync) while (!TXSTAbits.TRMT); //WAIT Trasmition finish
+
+}
