@@ -110,20 +110,17 @@ void InitApp(void)
 #elif (use_IR_IN2_PWM)  
     //PWR 50%
     IR_OUTPUT_TRIS = TRIS_INPUT; // Disable PWM pin (CCP1)
-    //PR2=26;                      // 37037.03704 Hz (Fosc=4Mhz)
-    PR2=0b00011001; //25
-
-    enablePWMoutput;           // CCP1CONbits.CCP1M=0b1100;  //PWM mode active-high
-    //CCPR1L=54;                 //HSbs bits of PWM duty cycle 50% (18518.51852 Hz)
-    CCPR1L=0b00001100; //12    http://www.micro-examples.com/public/microex-navig/doc/097-pwm-calculator.html
-    CCP1CONbits.DC1B=0b00;     //LSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    //http://www.micro-examples.com/public/microex-navig/doc/097-pwm-calculator.html
+    PR2=26;                    // 37037.03704 Hz (Fosc=4Mhz)
+    CCPR1L=13;                 // (6 bits) HSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    CCP1CONbits.DC1B=0b01;     // LSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    enablePWMoutput;           // CCP1CONbits.CCP1M=0b1100;  //PWM mode active-high    
     //TIMER2
     //PIR1bits.T2IF=0;           //ready for next interrupt
     T2CONbits.TOUTPS = 0b0000; //TMR2 Output Prescaler 1:1
     T2CONbits.T2CKPS = 0b00;   //TMR2 Clock Prescale 1
     T2CONbits.TMR2ON = 1;      //Enable TMR2
     IR_OUTPUT_TRIS = TRIS_OUTPUT; // Enable PWM pin (CCP1) // must be by interrupt
-    IR_OUTPUT=IR_OUTPUT_OFF;
     
     //TIMER1
     TMR1=0;

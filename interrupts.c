@@ -160,11 +160,11 @@ void interrupt isr(void) {
 //        PIR1bits.TMR1IF=0;
     } else if (INTCONbits.RABIF) // check the interrupt on change flag
     {
-        LED_SIGNAL = LED_SIGNAL_ON; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 
-        LED_SIGNAL_FLUSH;
+//        LED_SIGNAL = LED_SIGNAL_ON; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 
+//        LED_SIGNAL_FLUSH;
         interruptOnChangeIsr(); // interrupt on change has been detected call the isr	
-        LED_SIGNAL = LED_SIGNAL_OFF; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 
-        LED_SIGNAL_FLUSH;
+//        LED_SIGNAL = LED_SIGNAL_OFF; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 
+//        LED_SIGNAL_FLUSH;
         INTCONbits.RABIF = 0; // clear the interrupt on chage flag
     }
 

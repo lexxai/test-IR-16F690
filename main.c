@@ -28,7 +28,7 @@
 #define IR_LIMIT1_HT IR_LIMIT1+IR_histeresis
 #define IR_LIMIT1_HB IR_LIMIT1-IR_histeresis
 #define IR_LIMIT2 20
-#define IR_TRY   100
+#define IR_TRY   3
 
 
 
@@ -40,6 +40,9 @@
 #define durationSpace  4490  //us
 #define durationSpaceRepeat  2250  //us
 #define durationRepeat 11174  //us
+
+#define IRFRAME_ADRESS 0x10
+#define IRFRAME_COMMAND 0x6A
 
 
 
@@ -122,7 +125,7 @@ void main(void) {
     InitApp();
 
     uint16_t result;
-    uint8_t IrTry;
+    int8_t IrTry;
     //IR LED - ON
     disablePWMoutput;
     IR_OUTPUT = IR_OUTPUT_OFF;
@@ -182,11 +185,20 @@ void main(void) {
 //                    break;
 //            }
             dataready=0; 
-            send2BytesEUSART(address,command,false);
+            if (address==IRFRAME_ADRESS && command==IRFRAME_COMMAND){
+                if (IrTry > 0)  IrTry--;
+            }
+//            sendByteEUSART(IrTry,true);
+//            send2BytesEUSART(address,command,false);
+        }else{
+            IrTry = IR_TRY;
         }
         
-        //delay_ms(1000);
-        sendFrame(0x80,0x6A);
+        LED_SIGNAL = (IrTry == 0) ? LED_SIGNAL_ON : LED_SIGNAL_OFF;
+        LED_SIGNAL_FLUSH;
+        
+        delay_ms(500);
+        sendFrame(IRFRAME_ADRESS,IRFRAME_COMMAND);
         //send2BytesEUSART(0x80,0x6A,false);
         //delay_ms(1000);
         //delay_ms(800);
