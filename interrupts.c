@@ -31,6 +31,8 @@ void interruptOnChangeIsr(void) {
     unsigned short long tdiff;
     unsigned char pin;
     static unsigned long rxbuffer;
+    
+    counterIOC++;
 
     tdiff = ((timer<<8)+TMR0); // calculate how much time has been passed since last interrupt 
     //send2BytesEUSART(TMR1H,TMR1L,false);
@@ -124,11 +126,11 @@ void interruptOnChangeIsr(void) {
         } else {
             necpoj = 0; // no it's not start of 9ms pulse 
         }
-        address = 0xFF;
-        notaddress = 0xFF;
-        command = 0xFF;
-        notcommand = 0xFF;
-        dataready = 0x000;
+//        address = 0xFF;
+//        notaddress = 0xFF;
+//        command = 0xFF;
+//        notcommand = 0xFF;
+        //dataready = 0x000;
         TIMEOUT = TICKS11ms; //default timing  
         PREPULSE = TICKS8ms;
     }
@@ -149,19 +151,21 @@ void interrupt isr(void) {
         //TMR1=0x0000;
         PIR1bits.CCP1IF = 0;
     } else if (INTCONbits.T0IF){
+        //Timer0 overflow
         if(timer<0xFFFF)  timer++;	// this code is to increment the variable timer's value on every over flow but this if conditon will prevent this variable form rollover when a long timeout occurs
         INTCONbits.T0IF=0;
-    } else if (PIR1bits.TMR1IF) {   
-        timer1ready=false;
-        PIR1bits.TMR1IF=0;
+//    } else if (PIR1bits.TMR1IF) {   
+//       //Timer1 overflow    
+//        timer1ready=false;
+//        PIR1bits.TMR1IF=0;
     } else if (INTCONbits.RABIF) // check the interrupt on change flag
     {
         LED_SIGNAL = LED_SIGNAL_ON; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 
         LED_SIGNAL_FLUSH;
         interruptOnChangeIsr(); // interrupt on change has been detected call the isr	
-        INTCONbits.RABIF = 0; // clear the interrupt on chage flag
         LED_SIGNAL = LED_SIGNAL_OFF; // to blink the LED when IR signal is received ;									// to blink the LED when IR signal is received 
         LED_SIGNAL_FLUSH;
+        INTCONbits.RABIF = 0; // clear the interrupt on chage flag
     }
 
 #endif

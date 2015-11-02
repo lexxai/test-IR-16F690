@@ -23,7 +23,10 @@
 /******************************************************************************/
 /* Main Program                                                               */
 /******************************************************************************/
-#define IR_LIMIT1 1010
+#define IR_LIMIT1 990
+#define IR_histeresis 20
+#define IR_LIMIT1_HT IR_LIMIT1+IR_histeresis
+#define IR_LIMIT1_HB IR_LIMIT1-IR_histeresis
 #define IR_LIMIT2 20
 #define IR_TRY   100
 
@@ -31,10 +34,10 @@
 
 
 
-#define durationLogic1  1675  //sum 2232  //us
-#define durationLogic0  562   //sum 1125  //us
-#define durationBeacon 9000  //us
-#define durationSpace  4500  //us
+#define durationLogic1  1686  //sum 2232  //us
+#define durationLogic0  561   //sum 1125  //us
+#define durationBeacon 8999  //us
+#define durationSpace  4490  //us
 #define durationSpaceRepeat  2250  //us
 #define durationRepeat 11174  //us
 
@@ -48,21 +51,24 @@
 // USERS SUB
 
 
+
+
+
 void sendIRbit(bool b) {
     enablePWMoutput;
-    _t_delay_us(durationLogic0);
+    delay_us(durationLogic0);
     disablePWMoutput;
     if (b) {
-        _t_delay_us(durationLogic1);
+        delay_us(durationLogic1);
     } else {
-        _t_delay_us(durationLogic0);
+        delay_us(durationLogic0);
     }
 }
 
-void sendIRByte(unsigned char c) {
-    for (int j = 0; j < 8; j++) {
-        sendIRbit(c & 0x80);
-        c <<= 1;
+void sendIRByte(unsigned char byte) {
+    for (int j = 8; j > 0; j--) {
+        sendIRbit(byte & 0x80);
+        byte = byte << 1;
     }
 }
 
@@ -70,13 +76,13 @@ void sendIRServiceBit(bool type) {
     //type 0-prefix, 1-suffix
     enablePWMoutput;
     if (type) {
-        _t_delay_us(durationLogic0);
+        delay_us(durationLogic0);
         disablePWMoutput;
-        _t_delay_ms(40); // wait for the Data Frame time. 
+        delay_ms(40); // wait for the Data Frame time. 
     } else {
-        _t_delay_us(durationBeacon); // leading PULSE
+        delay_us(durationBeacon); // leading PULSE
         disablePWMoutput;
-        _t_delay_us(durationSpace); // space
+        delay_us(durationSpace); // space
     }
 }
 
@@ -91,14 +97,14 @@ void sendFrame(unsigned char address, unsigned char command) {
 
 void sendRepeate() {
     enablePWMoutput;
-    _t_delay_us(durationBeacon); //wait for ~9ms 	
+    delay_us(durationBeacon); //wait for ~9ms 	
     disablePWMoutput;
-    _t_delay_us(durationSpaceRepeat); //wait for 2.25ms
+    delay_us(durationSpaceRepeat); //wait for 2.25ms
 
     enablePWMoutput;
-    _t_delay_us(durationLogic0); //wait for ~562.5us
+    delay_us(durationLogic0); //wait for ~562.5us
     disablePWMoutput;
-    _t_delay_us(96187); //delay for 96.187 ms before sending the next repeate code
+    delay_us(96187); //delay for 96.187 ms before sending the next repeate code
 
 }
 
@@ -118,6 +124,7 @@ void main(void) {
     uint16_t result;
     uint8_t IrTry;
     //IR LED - ON
+    disablePWMoutput;
     IR_OUTPUT = IR_OUTPUT_OFF;
     IR_OUTPUT_FLUSH;
 
@@ -127,15 +134,17 @@ void main(void) {
     //    command[0] = 0x8D; // addres
     //    command[1] = 0xB1; // command
 
+    send2BytesEUSART(0x55,0xAA,false);
 
     while (1) {
 #if (use_IR_IN2_PWM_COMPARE)
         //Read analog value 
-        _t_delay_ms(5);
+        delay_ms(5);
         ADCON0bits.GO_nDONE = 1;
         while (ADCON0bits.GO_nDONE);
         result = ADRESH << 8 | ADRESL;
-        if (result <= IR_LIMIT1 && result >= IR_LIMIT2) {
+        if ((result <= (LED_SIGNAL==LED_SIGNAL_OFF?IR_LIMIT1_HT:IR_LIMIT1_HB))
+                                                       && result >= IR_LIMIT2) {
             if (IrTry > 0) IrTry--;
         } else {
             IrTry = IR_TRY;
@@ -148,11 +157,10 @@ void main(void) {
         //sendByteEUSART(ADRESH);
         //sendByteEUSART(ADRESL);
 #endif
-#if (use_IR_IN2_PWM)
-        //send2BytesEUSART(0x8D,0xB1,true);
-        
-        //_t_delay_ms(1000);
-        
+#if (use_IR_IN2_PWM) 
+        //send2BytesEUSART(0x80,0xDA,true);
+        //delay_ms(1000);
+        //send2BytesEUSART(TMR1H,TMR1L,true);
         if (dataready) // data is received and ready to be procssed 
         {
 //            switch (command) // swich on 
@@ -176,11 +184,15 @@ void main(void) {
             dataready=0; 
             send2BytesEUSART(address,command,false);
         }
-        //sendFrame(0x8D, 0xB1);
-        //_t_delay_ms(5000);
-        //_t_delay_ms(800);
-
-#endif        
+        
+        //delay_ms(1000);
+        sendFrame(0x80,0x6A);
+        //send2BytesEUSART(0x80,0x6A,false);
+        //delay_ms(1000);
+        //delay_ms(800);
+        
+#endif  
+        
 
     }
 

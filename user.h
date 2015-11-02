@@ -54,8 +54,8 @@ volatile union {
 #define enablePWMoutput  TMR2 = 0x00;CCP1CONbits.CCP1M=0b1100  //PWM mode active-high
 #define disablePWMoutput CCP1CONbits.CCP1M = 0x0 //stop generating 38Khz singal. 
 
-#define _t_delay_us(tu) timer1ready=true;TMR1=-tu;while(timer1ready)
-#define _t_delay_ms(t) for (int _loop_=0;_loop_<t;_loop_++) _t_delay_us(1000);
+#define _t_delay_us(tu) TMR1=-tu;PIR1bits.TMR1IF=0;while(!PIR1bits.TMR1IF)
+#define _t_delay_ms(t) for (int _loop_=t;_loop_>0;_loop_--) _t_delay_us(1000);
 
 
 #define TICKS11ms 	11044      	// ticks in 11ms
@@ -81,6 +81,7 @@ volatile unsigned char address = 0, notaddress = 0; // these varible are used to
 volatile unsigned char command = 0, notcommand = 0; // these varible are used to store received address
 
 volatile bool timer1ready=true;
+volatile unsigned char counterIOC;
 
 /******************************************************************************/
 /* User Level #define Macros                                                  */
@@ -97,3 +98,5 @@ volatile bool timer1ready=true;
 void InitApp(void);         /* I/O and Peripheral Initialization */
 void sendByteEUSART(unsigned char byte, bool sync);
 void send2BytesEUSART(unsigned char byte1, unsigned char byte2, bool sync);
+void delay_us(int tu);
+void delay_ms(int t);

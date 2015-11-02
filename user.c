@@ -107,13 +107,15 @@ void InitApp(void)
 
     T1CONbits.TMR1ON=1;    //Enable Timer1
     
-#elif (use_IR_IN2_PWM)    
+#elif (use_IR_IN2_PWM)  
     //PWR 50%
     IR_OUTPUT_TRIS = TRIS_INPUT; // Disable PWM pin (CCP1)
-    PR2=26;                      // 37037.03704 Hz (Fosc=4Mhz)
+    //PR2=26;                      // 37037.03704 Hz (Fosc=4Mhz)
+    PR2=0b00011001; //25
 
     enablePWMoutput;           // CCP1CONbits.CCP1M=0b1100;  //PWM mode active-high
-    CCPR1L=54;                 //HSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    //CCPR1L=54;                 //HSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    CCPR1L=0b00001100; //12    http://www.micro-examples.com/public/microex-navig/doc/097-pwm-calculator.html
     CCP1CONbits.DC1B=0b00;     //LSbs bits of PWM duty cycle 50% (18518.51852 Hz)
     //TIMER2
     //PIR1bits.T2IF=0;           //ready for next interrupt
@@ -121,6 +123,7 @@ void InitApp(void)
     T2CONbits.T2CKPS = 0b00;   //TMR2 Clock Prescale 1
     T2CONbits.TMR2ON = 1;      //Enable TMR2
     IR_OUTPUT_TRIS = TRIS_OUTPUT; // Enable PWM pin (CCP1) // must be by interrupt
+    IR_OUTPUT=IR_OUTPUT_OFF;
     
     //TIMER1
     TMR1=0;
@@ -142,7 +145,7 @@ void InitApp(void)
     IOCBbits.IOCB4 = 1;  //interrupt on change only for PORTB.4 (IR_IN2)
     INTCONbits.T0IE=1;
     INTCONbits.T0IF=0;
-    PIE1bits.TMR1IE=1;
+    //PIE1bits.TMR1IE=1;
     PIR1bits.TMR1IF=0;
     
     INTCONbits.RABIE=1;  //interrupt on change enable
@@ -171,4 +174,16 @@ void send2BytesEUSART(unsigned char byte1, unsigned char byte2, bool sync) {
     TXREG = byte2;
     if (sync) while (!TXSTAbits.TRMT); //WAIT Trasmition finish
 
+}
+
+void delay_us(int tu) {
+    TMR1=-tu;
+    PIR1bits.TMR1IF=0;
+    while(!PIR1bits.TMR1IF);
+}
+
+void delay_ms(int t) {
+    for (int _loop_=t;_loop_>0;_loop_--) {
+        delay_us(1000);
+    }
 }
