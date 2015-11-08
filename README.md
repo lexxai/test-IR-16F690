@@ -23,3 +23,7 @@ http://www.vishay.com/ir-receiver-modules/presence-sensor/
 
 
 ![Shema](https://github.com/lexxai/test-IR-16F690/blob/TSOP/shema/shema.png "Shema")
+
+![prototype 1](https://lh6.googleusercontent.com/1Tlwczcu5GIQi1g7NO9YDvpfdIDF0RYjtWxJO4FzAxI=w958-h546 "prototype 1")
+![prototype 1](https://lh6.googleusercontent.com/-xx-TiCHkMM8/Vj_PRcAvU5I/AAAAAAAAJHw/4qjTbIQ568E/w958-h488-no/IMG_1351.JPG "prototype 1")
+![prototype 1](https://lh6.googleusercontent.com/-oHt2x21S00U/Vj_PQP8Z2ZI/AAAAAAAAJHk/5vHUPwWIsPo/w958-h815-no/IMG_1349.JPG "prototype 1")
