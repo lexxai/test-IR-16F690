@@ -112,7 +112,7 @@ void InitApp(void)
     IR_OUTPUT_TRIS = TRIS_INPUT; // Disable PWM pin (CCP1)
     //http://www.micro-examples.com/public/microex-navig/doc/097-pwm-calculator.html
     PR2=26;                    // 37037.03704 Hz (Fosc=4Mhz)
-    CCPR1L=13;                 // (6 bits) HSbs bits of PWM duty cycle 50% (18518.51852 Hz)
+    CCPR1L=13;                 // (6 bits) HSbs bits of PWM duty cycle 50% (74074.07408 Hz)
     CCP1CONbits.DC1B=0b01;     // LSbs bits of PWM duty cycle 50% (18518.51852 Hz)
     enablePWMoutput;           // CCP1CONbits.CCP1M=0b1100;  //PWM mode active-high    
     //TIMER2
